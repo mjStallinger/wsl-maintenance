@@ -1,6 +1,6 @@
-# Creates a backup for the personal wsl instance (mjUbuntu).
+# Creates a backup for the personal wsl instance (Ubuntu).
 # Requires wsl to be installed.
-param ($distro = 'mjUbuntu')
+param ($distro = 'Ubuntu')
 # export path (by convention) 
 $exportPath = Join-Path -Path $([System.Environment]::GetFolderPath('MyDocuments')) -ChildPath 'wsl'
 # file name including date, host and distro
