@@ -10,7 +10,7 @@ $importFileName = 'findLatestTARfileWithDistroNameInPath';
 # run import
 Write-Output "Importing from '$importFileName' to ..."
 
-# wsl --import $distro 
+# wsl --import Ubuntu c:\Users\mj\AppData\Local\wsl c:\Users\mj\OneDrive\Data\wsl\2023-01-29_Ubuntu_MAJA.tar
 
 # set default
 # wsl --setdefault $distro
