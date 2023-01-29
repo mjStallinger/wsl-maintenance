@@ -9,3 +9,5 @@ $exportFileName = Join-Path -Path $exportPath -ChildPath $tarFileName;
 # run export
 Write-Output "Exporting to '$exportFileName'..."
 wsl --export $distro $exportFileName
+
+# ToDo: keep only the last xxx per Hostname & Distro
