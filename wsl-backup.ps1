@@ -13,6 +13,7 @@ param (
     [string] $distro
 )
 # check for default param (ToDo: remove redundancy)
+# . $PSScriptRoot\scripts\variables.ps1  Here $PSScriptRoot is the path of directory of the running script.
 if (!$distro) {
     $choice = Read-Host "Param '-distro' not provideed. Continue wirh default (Ubuntu)? [y/n]"
     if ($choice -eq 'y') {
