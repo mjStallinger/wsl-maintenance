@@ -5,6 +5,5 @@
 		}
 	],
 	"settings": {
-		"editor.defaultFormatter": "ms-vscode.powershell"
 	}
 }
