@@ -13,14 +13,9 @@ param (
     [string] $distro
 )
 # check for default param (ToDo: remove redundancy)
-if (!$distro) {
-    $choice = Read-Host "Param '-distro' not provideed. Continue wirh default (Ubuntu)? [y/n]"
-    if ($choice -eq 'y') {
-        $distro = 'Ubuntu'
-    } else {
-        return
-    }
-}
+. $PSScriptRoot\params.ps1
+
+Confirm-Distro($distro)
 
 # restore path (by convention)
 # mkDir
