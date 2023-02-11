@@ -13,17 +13,20 @@
         As of 2023-02-10, wsl stdout is encoded in 'BigEndianUnicode'.
         Therefor, this function executes wsl commands within modified output encoding.
 #>
-function Invoke-Wsl() {
+function Invoke-UnicodeEncoded() {
     param (
         [scriptblock]
         # Scriptblock to be invoked within changed encoding.
         $scriptBlock
     )
     # temporarily set OutputEncoding
-    $consoleEncoding = ([console]::OutputEncoding)
-    [console]::OutputEncoding = New-Object System.Text.UnicodeEncoding
-    $output = Invoke-Command($scriptBlock)
-    [console]::OutputEncoding = $consoleEncoding
+    $consoleEncoding = [Console]::OutputEncoding
+    [Console]::OutputEncoding = New-Object System.Text.UnicodeEncoding
+    try {
+        $output = Invoke-Command($scriptBlock)
+    } finally {
+        [Console]::OutputEncoding = $consoleEncoding
+    }
     Write-Output $output
 }
 
@@ -35,7 +38,7 @@ function Invoke-Wsl() {
 #>
 function Get-DistributionInfo() {
     # verbose list all installed distributions
-    $content = Invoke-Wsl({ wsl -l -v })
+    $content = Invoke-UnicodeEncoded({ wsl -l -v })
     if ($null -ne $content) {
         $firstLine = $true
         $output = $content | ForEach-Object {
