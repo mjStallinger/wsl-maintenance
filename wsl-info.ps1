@@ -2,28 +2,28 @@
     .SYNOPSIS
         WSL info script.
     .DESCRIPTION
-        Provides information about wsl instances in format of PowerShell objects.
+        Provides information about wsl instances in format of PowerShell object tables.
 #>
 
 
 <#
     .SYNOPSIS
-        Invokes the scriptblock passed.
+        Invokes wsl with the params passed.
     .DESCRIPTION
         As of 2023-02-10, wsl stdout is encoded in 'BigEndianUnicode'.
-        Therefor, this function executes wsl commands within modified output encoding.
+        Therefor, this function executes wsl commands within temporarily modified output encoding.
 #>
-function Invoke-UnicodeEncoded() {
+function Invoke-WslUnicodeEncoded() {
     param (
-        [scriptblock]
-        # Scriptblock to be invoked within changed encoding.
-        $scriptBlock
+        [String[]]
+        # Params to be passed to wsl when invoked.
+        $params
     )
     # temporarily set OutputEncoding
     $consoleEncoding = [Console]::OutputEncoding
-    [Console]::OutputEncoding = New-Object System.Text.UnicodeEncoding
+    [Console]::OutputEncoding = [System.Text.Encoding]::Unicode
     try {
-        $output = Invoke-Command($scriptBlock)
+        $output = wsl $params
     } finally {
         [Console]::OutputEncoding = $consoleEncoding
     }
@@ -32,30 +32,25 @@ function Invoke-UnicodeEncoded() {
 
 <#
     .SYNOPSIS
-        Returns data object containing info about wsl distributions.
+        Returns an object table containing info about wsl distributions.
     .DESCRIPTION
         Table-format: DEFAULT, NAME, STATUS, VERSION;
 #>
-function Get-DistributionInfo() {
+function Get-WslDistributionInfo() {
     # verbose list all installed distributions
-    $content = Invoke-UnicodeEncoded({ wsl -l -v })
-    if ($null -ne $content) {
-        $firstLine = $true
-        $output = $content | ForEach-Object {
-            if ($_.Trim()) {
-                $line = $_ -replace '(\s)+', ',' # replaces multiple spaces by commas
-                if ($firstLine) {
-                    $line = "DEFAULT$line" # append Header for 'DEFAULT'
-                    $firstLine = $false
-                }
-                return $line
+    $content = Invoke-WslUnicodeEncoded(@('-l', '-v'))
+    $fixHeader = $true
+    $output = $content | ForEach-Object {
+        if (![String]::IsNullOrWhitespace($_)) {
+            $row = $_ -replace '(\s)+', ',' # replaces multiple spaces by commas
+            if ($fixHeader) {
+                $row = "DEFAULT$row" # append Header for 'DEFAULT'
+                $fixHeader = $false
             }
+            return $row
         }
-        return $output | ConvertFrom-Csv
-    } else {
-        return $null
     }
+    return $output | ConvertFrom-Csv
 }
 
-$test = Get-DistributionInfo
-Write-Output $test
+Get-WslDistributionInfo
