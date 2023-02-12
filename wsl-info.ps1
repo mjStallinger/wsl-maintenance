@@ -52,5 +52,3 @@ function Get-WslDistributionInfo() {
     }
     return $output | ConvertFrom-Csv
 }
-
-Get-WslDistributionInfo
